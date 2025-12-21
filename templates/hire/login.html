@@ -1,0 +1,16 @@
+{% include 'layouts/header.html' %}
+
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="login-box">
+    <h3>Login</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <button>Login</button>
+    </form>
+</div>
+
+{% include 'layouts/footer.html' %}

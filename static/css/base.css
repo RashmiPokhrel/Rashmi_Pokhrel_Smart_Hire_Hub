@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f8;
+}
+
+.header {
+    background: #0f172a;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.footer {
+    background: #0f172a;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
