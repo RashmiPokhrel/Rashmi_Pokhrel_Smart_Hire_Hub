@@ -6,151 +6,174 @@ import json
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.db import IntegrityError
+from django.shortcuts import render,redirect
 
 
+
+def home(request):
+    return render(request, 'hire/home.html')
 
 @csrf_exempt
 
+
+
 def register_user(request):
+    if request.method == 'GET':
+        return render(request, 'hire/register.html')
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
 
-            username = data.get('username')
-            email = data.get('email')
-            password = data.get('password')
             role = data.get('role')
+            password = data.get('password')
+            confirm_password = data.get('confirm_password')
 
-            # Check required fields
-            if not username or not email or not password or not role:
-                return JsonResponse(
-                    {'error': 'All fields are required'},
-                    status=400
-                )
+            # 🔹 COMMON PASSWORD CHECK
+            if not password or not confirm_password:
+                return JsonResponse({'error': 'Password fields are required'}, status=400)
 
-            #  Password validation
+            if password != confirm_password:
+                return JsonResponse({'error': 'Passwords do not match'}, status=400)
+
             if len(password) < 6:
-                return JsonResponse(
-                    {'error': 'Password must be at least 6 characters long'},
-                    status=400
+                return JsonResponse({'error': 'Password must be at least 6 characters long'}, status=400)
+
+            # =========================
+            # JOB SEEKER REGISTRATION
+            # =========================
+            if role == 'job_seeker':
+                username = data.get('username')
+                email = data.get('email')
+
+                if not username or not email:
+                    return JsonResponse({'error': 'Username and email are required'}, status=400)
+
+                if User.objects.filter(username=username).exists():
+                    return JsonResponse({'error': 'Username already exists'}, status=400)
+
+                if User.objects.filter(email=email).exists():
+                    return JsonResponse({'error': 'Email already registered'}, status=400)
+
+                user = User.objects.create(
+                    username=username,
+                    email=email,
+                    role='job_seeker',
+                    password=make_password(password)
                 )
 
-            #  Check username already exists
-            if User.objects.filter(username=username).exists():
-                return JsonResponse(
-                    {'error': 'Username already exists'},
-                    status=400
-                )
-
-            # Check email already exists
-            if User.objects.filter(email=email).exists():
-                return JsonResponse(
-                    {'error': 'Email already registered'},
-                    status=400
-                )
-
-            #  Create user
-            user = User.objects.create(
-                username=username,
-                email=email,
-                role=role,
-                password=make_password(password)
-            )
-
-            #  Recruiter profile creation
-            if role == 'recruiter':
+            # =========================
+            # RECRUITER REGISTRATION
+            # =========================
+            elif role == 'recruiter':
                 company_name = data.get('company_name')
                 company_email = data.get('company_email')
+                company_phone = data.get('company_phone')
 
-                if not company_name or not company_email:
+                if not company_name or not company_email or not company_phone:
                     return JsonResponse(
-                        {'error': 'Company details are required for recruiter'},
+                        {'error': 'Company name, email, and phone are required'},
                         status=400
                     )
+
+                # company name acts as username
+                if User.objects.filter(username=company_name).exists():
+                    return JsonResponse(
+                        {'error': 'Company already registered'},
+                        status=400
+                    )
+
+                if User.objects.filter(email=company_email).exists():
+                    return JsonResponse(
+                        {'error': 'Company email already registered'},
+                        status=400
+                    )
+
+                user = User.objects.create(
+                    username=company_name,
+                    email=company_email,
+                    role='recruiter',
+                    password=make_password(password)
+                )
 
                 RecruiterProfile.objects.create(
                     user=user,
                     company_name=company_name,
                     company_email=company_email,
-                    company_phone=data.get('company_phone'),
+                    company_phone=company_phone,
                     company_address=data.get('company_address')
                 )
 
-            return JsonResponse(
-                {'message': 'Registration successful'},
-                status=201
-            )
+            else:
+                return JsonResponse({'error': 'Invalid role'}, status=400)
 
-        #  JSON error handling
+            return JsonResponse({'message': 'Registration successful'}, status=201)
+
         except json.JSONDecodeError:
-            return JsonResponse(
-                {'error': 'Invalid JSON data'},
-                status=400
-            )
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
-        # For No repitation of email
         except IntegrityError:
-            return JsonResponse(
-                {'error': 'User already exists'},
-                status=400
-            )
+            return JsonResponse({'error': 'User already exists'}, status=400)
 
-        # Any other unexpected error
         except Exception as e:
-            return JsonResponse(
-                {'error': str(e)},
-                status=500
-            )
+            return JsonResponse({'error': str(e)}, status=500)
 
-    return JsonResponse(
-        {'error': 'Invalid request method'},
-        status=405
-    )
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 @csrf_exempt
 def login_user(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
 
-        username = data.get('username')
-        password = data.get('password')
+    if request.method == 'GET':
+        return render(request, 'hire/login.html')
+    
+    if request.method == "POST":
 
-        if not username or not password:
+        # SAFELY PARSE JSON
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
             return JsonResponse(
-                {'error': 'Username and password are required'},
+                {"error": "Invalid JSON data"},
                 status=400
             )
 
-        user = authenticate(username=username, password=password)
+        username = data.get("username")
+        password = data.get("password")
 
-        if user is None:
+        if not username or not password:
             return JsonResponse(
-                {'error': 'Invalid credentials'},
+                {"error": "Username and password required"},
+                status=400
+            )
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse(
+                {"error": "Invalid username or password"},
                 status=401
             )
 
-        login(request, user)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
-        return JsonResponse(
-            {
-                'message': 'Login successful',
-                'username': user.username,
-                'role': user.role
-            },
-            status=200
-        )
 
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+def password_reset_view(request):
+    return render(request, "hire/reset.html")
+
+
 @csrf_exempt
 def logout_view(request):
-    if request.method == 'POST':
+    
+ 
+    if request.method == "POST":
         logout(request)
-
-        return JsonResponse(
-            {'message': 'Logout successful'},
-            status=200
-        )
-
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+        return redirect("login")  
+    return redirect("login")
 
 

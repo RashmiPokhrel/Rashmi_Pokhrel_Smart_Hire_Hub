@@ -1,15 +1,216 @@
-.register-box {
-    width: 380px;
-    margin: 90px auto;
-    background: #fff7ed;
-    padding: 25px;
-    border-radius: 10px;
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, sans-serif;
 }
 
-.register-box button {
-    background: #16a34a;
-    color: white;
-    border: none;
-    padding: 10px;
+/* ================= BODY BACKGROUND ================= */
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg,  
+            rgba(15, 42, 86, 0.85),
+            rgba(31, 52, 89, 0.85));
+    position: relative;
+    overflow-x: hidden;
+}
+
+
+/* ================= PAGE CENTER ================= */
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ================= MAIN CARD ================= */
+.auth-card {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
     width: 100%;
+    max-width: 950px;
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+}
+
+/* ================= LEFT PANEL ================= */
+.auth-left {
+    position: relative;
+    background: linear-gradient(160deg, #738bb1, #143a7a);
+    color: #fff;
+    padding: 50px 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    overflow: hidden;
+}
+
+/* Triangle shape */
+.auth-left::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -120px;
+    width: 320px;
+    height: 100%;
+    background: linear-gradient(180deg, #4fb3ff, #1e4fd8);
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    opacity: 0.85;
+}
+
+/* Floating circle */
+.auth-left::before {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    top: 40px;
+    left: -60px;
+}
+
+.auth-left .logo {
+    width: 160px;
+    margin-bottom: 10px;
+    z-index: 1;
+}
+
+.auth-left h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin: 0;
+    z-index: 1;
+}
+
+.auth-left p {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.9;
+    z-index: 1;
+}
+
+/* ================= RIGHT PANEL ================= */
+.auth-right {
+    padding: 45px 40px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* ================= TITLE ================= */
+.auth-right h1 {
+    margin-bottom: 25px;
+    color: #0f2a56;
+    text-align: center;
+}
+
+/* ================= ROLE TOGGLE ================= */
+.role-toggle {
+    display: flex;
+    background: #e6ecf5;
+    border-radius: 30px;
+    margin-bottom: 28px;
+}
+
+.role-toggle button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    color: #0f2a56;
+    transition: all 0.3s ease;
+}
+
+.role-toggle button.active {
+    background: #0f2a56;
+    color: #fff;
+    border-radius: 30px;
+}
+
+/* ================= FORM ================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+input,
+textarea {
+    padding: 13px 15px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+textarea {
+    resize: none;
+    height: 85px;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #0f2a56;
+    box-shadow: 0 0 0 2px rgba(15, 42, 86, 0.15);
+}
+
+/* ================= BUTTON ================= */
+.submit-btn {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #0f2a56, #143a7a);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(15, 42, 86, 0.4);
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .auth-card {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-left {
+        text-align: center;
+        padding: 35px 25px;
+    }
+
+    .auth-left::after {
+        display: none;
+    }
+
+    .auth-left .logo {
+        margin: 0 auto;
+    }
+
+    .auth-right {
+        padding: 35px 25px;
+    }
 }

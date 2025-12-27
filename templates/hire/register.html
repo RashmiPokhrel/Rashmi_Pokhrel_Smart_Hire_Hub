@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account</title>   
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head> 
+<body>
+
+<div class="page">
+  <div class="auth-card">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+      <img src="/static/assets/images/Logo.png" class="logo" alt="Smart Hire Hub">
+
+      <h2>Welcome to<br>Smart Hire Hub</h2>
+
+      <p>
+        Build a smart resume,<br>
+        hire smarter talent — all in one place.
+      </p>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+
+     
+ 
+
+
+        <h1>Create Account</h1>
+        <p>Note: Use the correct number and name to get the job releated information</p>
+
+        <!-- Role Toggle -->
+        <div class="role-toggle">
+            <button id="jobBtn" class="active" onclick="selectRole('job_seeker')">
+                Job Seeker
+            </button>
+            <button id="recBtn" onclick="selectRole('recruiter')">
+                Recruiter
+            </button>
+        </div>
+
+        <form id="registerForm">
+            <input type="hidden" id="role" value="job_seeker">
+
+            <!-- JOB SEEKER -->
+            <div id="jobSeekerFields" class="form-group">
+                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" placeholder="Email">
+            </div>
+
+            <!-- RECRUITER -->
+            <div id="recruiterFields" class="form-group hidden">
+                <input type="text" id="company_name"
+                       placeholder="Company Name (used as username)">
+                <input type="email" id="company_email" placeholder="Company Email">
+                <input type="text" id="company_phone" placeholder="Company Phone">
+                <textarea id="company_address" placeholder="Company Address"></textarea>
+            </div>
+
+            <!-- COMMON -->
+            <input type="password" id="password" placeholder="Password (min 6 chars)">
+            <input type="password" id="confirm_password" placeholder="Confirm Password">
+
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+           </div>
+
+    </div>
+</div>
+
+<script>
+    const LOGIN_URL = "{% url 'login' %}";
+</script>
+<script src="{% static 'js/register.js' %}"defer></script>
+
+</body>
+</html>
