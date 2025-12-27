@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1f2f57, #0f1c3f);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-container {
+    width: 900px;
+    height: 500px;
+    background: #fff;
+    display: flex;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* LEFT FORM */
+.auth-form {
+    width: 50%;
+    padding: 40px;
+}
+
+.logo img {
+    height: 100px;
+    margin-bottom: 20px;
+    margin-left: 100px;
+}
+.auth-form h2 {
+    margin-bottom: 10px;
+}
+
+.note {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Password Field */
+.password-field {
+    position: relative;
+}
+
+.password-field i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+/* Remember Password */
+.options {
+    margin-bottom: 20px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #153e75;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0f2f5c;
+}
+
+.signup-link {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #153e75;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* RIGHT SIDE */
+.auth-image {
+    width: 50%;
+    background: linear-gradient(180deg, #3f7ee8, #2b5fd9);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.auth-image h2 {
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.auth-image img {
+    max-width: 90%;
+}
