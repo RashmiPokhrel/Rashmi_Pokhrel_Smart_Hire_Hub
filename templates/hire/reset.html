@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password | Smart Hire Hub</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+</head>
+<body>
+
+<div class="reset-page">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+        <!-- LOGO -->
+        <div class="brand">
+            <img src="{% static 'assets/images/Logo.png' %}" alt="Logo">
+            <span>Smart Hire Hub</span>
+        </div>
+
+        <!-- CENTER CONTENT -->
+        <div class="left-content">
+            <div class="instructions">
+                <h2>Instructions</h2>
+                <ul>
+                    <li>Enter the email address associated with your account</li>
+                    <li>We will send an OTP to your email</li>
+                    <li>Verify the OTP and reset your password</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BIG IMAGE -->
+        <img class="illustration"
+             src="{% static 'assets/images/reset.png' %}"
+             alt="Reset Illustration">
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <div class="reset-card">
+            <h1>Re-Set Password</h1>
+            <p>
+                Forgot your password? Don’t worry.
+                Enter your registered email address and we’ll help you reset it.
+            </p>
+
+            <form>
+                <label>Email</label>
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">Send OTP</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

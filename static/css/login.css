@@ -6,125 +6,178 @@
 }
 
 body {
-    background: linear-gradient(135deg, #1f2f57, #0f1c3f);
-    height: 100vh;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1e3a8a, #020617);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.page-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
+/* MAIN CONTAINER */
 .auth-container {
-    width: 900px;
-    height: 500px;
+    width: 90%;
+    max-width: 950px;
+    min-height: 550px;            
     background: #fff;
     display: flex;
-    border-radius: 15px;
+    border-radius: 18px;
     overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    align-items: stretch;          
 }
 
 /* LEFT FORM */
 .auth-form {
     width: 50%;
-    padding: 40px;
+    padding: 45px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;               
+}
+
+/* LOGO */
+.logo {
+    margin-bottom: 25px;
 }
 
 .logo img {
-    height: 100px;
-    margin-bottom: 20px;
-    margin-left: 100px;
+    height: 42px;
 }
+
+/* HEADINGS */
 .auth-form h2 {
-    margin-bottom: 10px;
+    font-size: 26px;
+    margin-bottom: 6px;
 }
 
 .note {
     font-size: 13px;
     color: #666;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
+/* INPUTS */
 .auth-form input {
     width: 100%;
-    padding: 12px;
+    padding: 13px 14px;
     margin-bottom: 15px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid #ccc;
+    font-size: 14px;
 }
 
-/* Password Field */
+/* PASSWORD FIELD */
 .password-field {
     position: relative;
 }
 
 .password-field i {
     position: absolute;
-    right: 12px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #666;
+    color: #555;
 }
 
-/* Remember Password */
-.options {
-    margin-bottom: 20px;
+/* FORGOT PASSWORD */
+.forgot-password {
+    margin-bottom: 14px;
 }
 
-.remember {
+.forgot-password a {
+    font-size: 13px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* REMEMBER PASSWORD */
+.remember-container {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 13px;
+    margin-bottom: 20px;
 }
 
-/* Button */
+/* LOGIN BUTTON */
 button {
     width: 100%;
-    padding: 12px;
-    background: #153e75;
+    padding: 13px;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
     color: #fff;
     border: none;
-    border-radius: 25px;
+    border-radius: 30px;
     font-size: 16px;
     cursor: pointer;
 }
 
 button:hover {
-    background: #0f2f5c;
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
 }
 
+/* SIGNUP LINK —  GUARANTEED VISIBILITY */
 .signup-link {
-    margin-top: 15px;
+    margin-top: 24px;
     text-align: center;
     font-size: 14px;
+    display: block;
+    color: #000;
 }
 
 .signup-link a {
-    color: #153e75;
-    text-decoration: none;
+    color: #1d4ed8;
     font-weight: 600;
+    text-decoration: none;
 }
 
-/* RIGHT SIDE */
+/* ERROR MESSAGE */
+.error {
+    color: red;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+/* RIGHT SIDE IMAGE */
 .auth-image {
     width: 50%;
-    background: linear-gradient(180deg, #3f7ee8, #2b5fd9);
+    background: linear-gradient(180deg, #14305e, #314d9a);
     color: white;
+    padding: 45px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 40px 20px;
 }
 
 .auth-image h2 {
-    margin-bottom: 20px;
-    line-height: 1.4;
+    margin-bottom: 30px;
+    font-size: 26px;
 }
 
 .auth-image img {
     max-width: 90%;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .auth-container {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .auth-form {
+        width: 100%;
+    }
+
+    .auth-image {
+        display: none;
+    }
+    .signup-link 
+    { 
+        background: yellow; 
+    }
+
 }

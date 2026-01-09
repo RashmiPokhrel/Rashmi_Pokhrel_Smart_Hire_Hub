@@ -22,7 +22,14 @@ form.addEventListener("submit", async (e) => {
     const data = await response.json();
 
     if (response.ok) {
-        window.location.href = "/home/";
+        // ROLE BASED REDIRECT
+        if (data.role === "recruiter") {
+            window.location.href = "/recruiter-dashboard/";
+        } else if (data.role === "job_seeker") {
+            window.location.href = "/jobseeker-dashboard/";
+        } else {
+            errorMsg.innerText = "Unknown user role";
+        }
     } else {
         errorMsg.innerText = data.error || "Login failed";
     }

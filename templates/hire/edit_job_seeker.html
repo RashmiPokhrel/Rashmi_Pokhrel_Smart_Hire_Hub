@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="{% static 'css/edit_job_seeker.css' %}">
+</head>
+<body>
+
+<div class="profile-card">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="profile-header">
+            <img src="{% if profile.profile_image %}
+                        {{ profile.profile_image.url }}
+                     {% else %}
+                        {% static 'assets/images/profile.png' %}
+                     {% endif %}">
+            <h2>Edit Profile</h2>
+        </div>
+
+        <input type="file" name="profile_image">
+
+        <input type="text" name="full_name" value="{{ profile.full_name }}" placeholder="Full Name">
+        <input type="text" name="phone" value="{{ profile.phone }}" placeholder="Phone">
+        <input type="text" name="location" value="{{ profile.location }}" placeholder="Location">
+
+        <textarea name="bio" placeholder="About you">{{ profile.bio }}</textarea>
+
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
+
+</body>
+</html>

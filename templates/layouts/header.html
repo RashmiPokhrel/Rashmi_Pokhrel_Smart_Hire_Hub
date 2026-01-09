@@ -1,12 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>SmartHireHub</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-</head>
-<body>
+{% load static %}
 
-<header class="header">
-    <h2>SmartHireHub</h2>
-</header>
+<div class="topbar">
+    <h2>Smart Hire Hub</h2>
+
+    <div class="profile-menu">
+        {% if request.user.role == "job_seeker" and request.user.jobseekerprofile.profile_image %}
+            <img src="{{ request.user.jobseekerprofile.profile_image.url }}"
+                 id="profileIcon"
+                 class="profile-icon">
+        {% elif request.user.role == "recruiter" and request.user.recruiterprofile.profile_image %}
+            <img src="{{ request.user.recruiterprofile.profile_image.url }}"
+                 id="profileIcon"
+                 class="profile-icon">
+        {% else %}
+            <img src="{% static 'assets/images/profile.png' %}"
+                 id="profileIcon"
+                 class="profile-icon">
+        {% endif %}
+
+        <div class="dropdown" id="profileDropdown">
+            <a href="{% url 'edit_profile' %}">My Profile</a>
+            <a href="#">Settings</a>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>

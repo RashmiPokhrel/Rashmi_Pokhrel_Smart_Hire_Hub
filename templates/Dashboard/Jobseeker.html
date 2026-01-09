@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Seeker Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="{% static 'assets/images/Logo.png' %}">
+            <h2>Smart Hire Hub</h2>
+        </div>
+
+        <ul class="menu">
+            <li class="active">Dashboard</li>
+            <li onclick="location.href='/edit_profile/'">My Profile</li>
+            <li>Saved Jobs</li>
+            <li>Applied Jobs</li>
+           <form method="POST" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn">Logout</button>
+</form>
+
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        {% include "layouts/header.html" %}
+        <!-- HEADER -->
+        <header class="top-header">
+            <h3>Welcome, {{ request.user.username }}</h3>
+         
+        </header>
+
+        <!-- CARDS -->
+        <section class="cards">
+            <div class="card">
+                <h4>Jobs Applied</h4>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h4>Saved Jobs</h4>
+                <p>0</p>
+            </div>
+
+            <div class="card">
+                <h4>Profile Completion</h4>
+                <p>30%</p>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

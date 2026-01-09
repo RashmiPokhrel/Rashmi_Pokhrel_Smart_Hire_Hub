@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home | Smart Hire Hub</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+<header class="header">
+    <h1>Welcome to Smart Hire Hub</h1>
+</header>
+
+<div class="container">
+
+    {% if user.is_authenticated %}
+        <div class="profile-card">
+
+            <!-- PROFILE HEADER -->
+            <div class="profile-header">
+                <div class="avatar">
+                    {{ user.username|first|upper }}
+                </div>
+                <h2>{{ user.username }}</h2>
+
+                {% if user.is_staff %}
+                    <span class="role recuiter">Recuriter</span>
+                {% else %}
+                    <span class="role user">Job Seekers</span>
+                {% endif %}
+
+                <a href="{% url 'edit_profile' %}">
+                <button class="btn secondary-btn">Edit Profile</button>
+                </a>
+            </div>
+
+            <!-- PROFILE DETAILS -->
+            <div class="profile-details">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email|default:"Not provided" }}</p>
+            </div>
+
+            <!-- ROLE BASED ACTIONS -->
+            <div class="actions">
+                {% if user.is_staff %}
+                    <a href="/admin/">
+                        <button class="btn primary-btn">Admin Panel</button>
+                    </a>
+                {% else %}
+                    <a href="#">
+                        <button class="btn secondary-btn">My Profile</button>
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- LOGOUT -->
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn logout-btn" type="submit">Logout</button>
+            </form>
+
+        </div>
+
+    {% else %}
+        <div class="card">
+            <p class="welcome-text">Please login or register</p>
+
+            <div class="button-group">
+                <a href="{% url 'login' %}">
+                    <button class="btn primary-btn">Login</button>
+                </a>
+
+                <a href="{% url 'register' %}">
+                    <button class="btn secondary-btn">Register</button>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

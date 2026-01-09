@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account</title>   
-     {% load static %}
+    <title>Create Account | Smart Hire Hub</title>
+
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
-</head> 
+</head>
 <body>
 
 <div class="page">
@@ -13,10 +14,9 @@
 
     <!-- LEFT PANEL -->
     <div class="auth-left">
-      <img src="/static/assets/images/Logo.png" class="logo" alt="Smart Hire Hub">
+      <img src="{% static 'assets/images/Logo.png' %}" class="logo" alt="Smart Hire Hub">
 
       <h2>Welcome to<br>Smart Hire Hub</h2>
-
       <p>
         Build a smart resume,<br>
         hire smarter talent — all in one place.
@@ -26,21 +26,20 @@
     <!-- RIGHT PANEL -->
     <div class="auth-right">
 
-     
- 
-
-
         <h1>Create Account</h1>
-        <p>Note: Use the correct number and name to get the job releated information</p>
 
-        <!-- Role Toggle -->
+        <!-- ROLE TOGGLE -->
         <div class="role-toggle">
-            <button id="jobBtn" class="active" onclick="selectRole('job_seeker')">
-                Job Seeker
+            <button type="button" id="jobBtn" class="active"
+        onclick="selectRole('job_seeker')">
+        Job Seeker
             </button>
-            <button id="recBtn" onclick="selectRole('recruiter')">
-                Recruiter
-            </button>
+
+        <button type="button" id="recBtn"
+                onclick="selectRole('recruiter')">
+                    Recruiter
+        </button>
+
         </div>
 
         <form id="registerForm">
@@ -67,15 +66,22 @@
 
             <button type="submit" class="submit-btn">Create Account</button>
         </form>
-           </div>
+
+        <p style="text-align:center; margin-top:15px;">
+            Already have an account?
+            <a href="{% url 'login' %}" style="color:#0f2a56; font-weight:600;">
+                Login
+            </a>
+        </p>
 
     </div>
+  </div>
 </div>
 
 <script>
     const LOGIN_URL = "{% url 'login' %}";
 </script>
-<script src="{% static 'js/register.js' %}"defer></script>
+<script src="{% static 'js/register.js' %}" defer></script>
 
 </body>
 </html>

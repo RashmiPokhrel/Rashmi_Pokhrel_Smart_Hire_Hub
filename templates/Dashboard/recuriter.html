@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recruiter Dashboard | Smart Hire Hub</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+</head>
+<body>
+
+{% include "layouts/header.html" %}
+
+<div class="dashboard">
+
+    <h1>Welcome Recruiter</h1>
+    <p class="subtitle">Manage your jobs and applicants</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Post a Job</h3>
+            <p>Create new job listings</p>
+            <div class="image-placeholder">📌 Image</div>
+        </div>
+
+        <div class="card">
+            <h3>Active Jobs</h3>
+            <p>View & manage posted jobs</p>
+            <div class="image-placeholder">📊 Image</div>
+        </div>
+
+        <div class="card">
+            <h3>Applicants</h3>
+            <p>Review job applications</p>
+            <div class="image-placeholder">📄 Image</div>
+        </div>
+
+        <div class="card">
+            <h3>Company Profile</h3>
+            <p>Edit company information</p>
+            <div class="image-placeholder">🏢 Image</div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
