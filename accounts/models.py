@@ -28,11 +28,20 @@ class JobSeekerProfile(models.Model):
 
 class RecruiterProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=255)
-    company_email = models.EmailField()
-    company_phone = models.CharField(max_length=20)
-    company_address = models.TextField()
-    profile_image = models.ImageField(upload_to='profiles/', default='profiles/default.png')
+
+    company_name = models.CharField(max_length=255, blank=True)
+    company_email = models.EmailField(blank=True)
+    company_phone = models.CharField(max_length=20, blank=True)
+    company_address = models.TextField(blank=True)
+
+    profile_image = models.ImageField(
+        upload_to='profiles/',
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return self.user.username
 
 
 class PasswordResetOTP(models.Model):

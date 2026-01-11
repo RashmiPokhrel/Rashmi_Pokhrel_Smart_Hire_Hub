@@ -324,6 +324,84 @@ def jobseeker_dashboard(request):
 
 @login_required
 def recruiter_dashboard(request):
-    return render(request, "Dashboard/recruiter.html")
+   
+    profile = RecruiterProfile.objects.get(user=request.user)
+    return render(request, "Dashboard/recuriter.html", {
+        "profile": profile
+    })
+
+from django.contrib.auth import update_session_auth_hash
+
+@login_required
+def account_settings(request):
+    user = request.user
+
+    if request.method == "POST":
+
+        # CHANGE PASSWORD
+        if 'change_password' in request.POST:
+            current = request.POST.get('current_password')
+            new = request.POST.get('new_password')
+            confirm = request.POST.get('confirm_password')
+
+            if not user.check_password(current):
+                messages.error(request, "Current password is incorrect")
+            elif new != confirm:
+                messages.error(request, "Passwords do not match")
+            else:
+                user.set_password(new)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        # CHANGE EMAIL
+        elif 'change_email' in request.POST:
+            user.email = request.POST.get('new_email')
+            user.save()
+            messages.success(request, "Email updated successfully")
+
+        # PERSONAL INFORMATION
+        elif 'personal_info' in request.POST:
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.save()
+            messages.success(request, "Personal information updated")
+
+        return redirect('account_settings')
+
+    return render(request, "settings/account_settings.html")
 
 
+@login_required
+def edit_recruiter_profile(request):
+    profile = RecruiterProfile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        profile.company_name = request.POST.get("company_name")
+        profile.company_email = request.POST.get("company_email")
+        profile.company_phone = request.POST.get("company_phone")
+        profile.company_address = request.POST.get("company_address")
+
+        if request.FILES.get("profile_image"):
+            profile.profile_image = request.FILES.get("profile_image")
+
+        profile.save()
+        return redirect("recruiter_dashboard")
+
+    return render(request, "hire/edit_recuriter.html", {
+        "profile": profile
+    })
+
+
+# Recruiter Account Settings
+
+@login_required
+def recruiter_account_settings(request):
+    if request.method == "POST":
+        if request.POST.get("new_password"):
+            request.user.set_password(request.POST.get("new_password"))
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('recruiter_account_settings')
+
+    return render(request, 'settings/recuriter_account_setting.html')

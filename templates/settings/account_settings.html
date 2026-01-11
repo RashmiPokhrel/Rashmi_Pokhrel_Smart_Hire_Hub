@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+</head>
+<body>
+
+<div class="settings-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="settings-sidebar">
+        <h3>Settings</h3>
+        <ul>
+            <li class="active">Account Settings</li>
+        </ul>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="settings-content">
+        <h2>Account Settings</h2>
+        <p class="subtitle">Manage your account information and security</p>
+
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+
+        <!-- CHANGE PASSWORD -->
+        <div class="card">
+            <h3>Change Password</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="password" name="current_password" placeholder="Current Password" required>
+                <input type="password" name="new_password" placeholder="New Password" required>
+                <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
+                <button name="change_password">Change Password</button>
+            </form>
+        </div>
+
+        <!-- CHANGE EMAIL -->
+        <div class="card">
+            <h3>Change Email</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="email" value="{{ request.user.email }}" disabled>
+                <input type="email" name="new_email" placeholder="New Email" required>
+                <button name="change_email">Change Email</button>
+            </form>
+        </div>
+
+        <!-- PERSONAL INFORMATION -->
+        <div class="card">
+            <h3>Personal Information</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <input type="text" name="first_name" placeholder="First Name"
+                           value="{{ request.user.first_name }}">
+                    <input type="text" name="last_name" placeholder="Last Name"
+                           value="{{ request.user.last_name }}">
+                </div>
+                <button name="personal_info">Save Changes</button>
+            </form>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,10 +1,8 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Recruiter Dashboard | Smart Hire Hub</title>
-
+    <title>Recruiter Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <script defer src="{% static 'js/dashboard.js' %}"></script>
 </head>
@@ -12,40 +10,52 @@
 
 {% include "layouts/header.html" %}
 
-<div class="dashboard">
+<div class="layout">  {# IMPORTANT #}
 
-    <h1>Welcome Recruiter</h1>
-    <p class="subtitle">Manage your jobs and applicants</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>Recruiter</h2>
+        <ul class="menu">
+            <li>Post Job</li>
+            <li>Active Jobs</li>
+            <li>Applicants</li>
 
-    <div class="cards">
+            <li>
+                <a href="{% url 'edit_recruiter_profile' %}">
+                    My Profile
+                </a>
+            </li>
 
-        <div class="card">
-            <h3>Post a Job</h3>
-            <p>Create new job listings</p>
-            <div class="image-placeholder">📌 Image</div>
+            <li>
+                <a href="{% url 'recruiter_account_settings' %}">
+                    Settings
+                </a>
+            </li>
+
+            <li>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <h1>Welcome, {{ profile.company_name }}</h1>
+
+        {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" class="profile-img">
+        {% endif %}
+
+        <div class="info-card">
+            <p><b>Email:</b> {{ profile.company_email }}</p>
+            <p><b>Phone:</b> {{ profile.company_phone }}</p>
+            <p><b>Address:</b> {{ profile.company_address }}</p>
         </div>
-
-        <div class="card">
-            <h3>Active Jobs</h3>
-            <p>View & manage posted jobs</p>
-            <div class="image-placeholder">📊 Image</div>
-        </div>
-
-        <div class="card">
-            <h3>Applicants</h3>
-            <p>Review job applications</p>
-            <div class="image-placeholder">📄 Image</div>
-        </div>
-
-        <div class="card">
-            <h3>Company Profile</h3>
-            <p>Edit company information</p>
-            <div class="image-placeholder">🏢 Image</div>
-        </div>
-
-    </div>
+    </main>
 
 </div>
-
 </body>
 </html>

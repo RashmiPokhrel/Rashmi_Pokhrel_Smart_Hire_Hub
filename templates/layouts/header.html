@@ -1,31 +1,42 @@
 {% load static %}
 
-<div class="topbar">
-    <h2>Smart Hire Hub</h2>
+<header class="topbar">
+    <div class="top-left">
+        <h2>Smart Hire Hub</h2>
+    </div>
 
     <div class="profile-menu">
-        {% if request.user.role == "job_seeker" and request.user.jobseekerprofile.profile_image %}
-            <img src="{{ request.user.jobseekerprofile.profile_image.url }}"
-                 id="profileIcon"
-                 class="profile-icon">
-        {% elif request.user.role == "recruiter" and request.user.recruiterprofile.profile_image %}
+
+        {# ================= PROFILE IMAGE ================= #}
+        {% if request.user.role == "recruiter" and request.user.recruiterprofile.profile_image %}
             <img src="{{ request.user.recruiterprofile.profile_image.url }}"
-                 id="profileIcon"
-                 class="profile-icon">
+                 class="profile-icon"
+                 id="profileIcon">
         {% else %}
             <img src="{% static 'assets/images/profile.png' %}"
-                 id="profileIcon"
-                 class="profile-icon">
+                 class="profile-icon"
+                 id="profileIcon">
         {% endif %}
 
+        {# ================= DROPDOWN ================= #}
         <div class="dropdown" id="profileDropdown">
-            <a href="{% url 'edit_profile' %}">My Profile</a>
-            <a href="#">Settings</a>
+
+            {# -------- JOB SEEKER -------- #}
+            {% if request.user.role == "job_seeker" %}
+                <a href="{% url 'edit_profile' %}">My Profile</a>
+                <a href="{% url 'account_settings' %}">Settings</a>
+
+            {# -------- RECRUITER -------- #}
+            {% elif request.user.role == "recruiter" %}
+                <a href="{% url 'edit_recruiter_profile' %}">My Profile</a>
+                <a href="{% url 'recruiter_account_settings' %}">Settings</a>
+            {% endif %}
 
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                <button type="submit">Logout</button>
+                <button type="submit" class="logout-btn">Logout</button>
             </form>
+
         </div>
     </div>
-</div>
+</header>

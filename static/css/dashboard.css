@@ -1,7 +1,13 @@
-/*  */
-body {
+/* RESET */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
+}
+
+/* BODY */
+body {
     background: #f4f6fb;
 }
 
@@ -14,7 +20,7 @@ body {
 /* SIDEBAR */
 .sidebar {
     width: 250px;
-    background: #1f3b57;
+    background: #0f172a;
     color: white;
     padding: 20px;
 }
@@ -30,7 +36,6 @@ body {
 
 .menu {
     list-style: none;
-    padding: 0;
     margin-top: 30px;
 }
 
@@ -42,30 +47,81 @@ body {
 
 .menu li:hover,
 .menu .active {
-    background: #2f5378;
+    background: #1e40af;
 }
 
 /* MAIN */
 .main {
     flex: 1;
-    padding: 25px;
+    padding: 20px;
+}
+
+/* TOPBAR */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* PROFILE MENU */
+.profile-menu {
+    position: relative;
+}
+
+.profile-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+/* DROPDOWN */
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background: white;
+    width: 160px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.dropdown a,
+.dropdown button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    color: #111;
+    text-decoration: none;
+}
+
+.dropdown a:hover,
+.dropdown button:hover {
+    background: #f1f5f9;
 }
 
 /* HEADER */
 .top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-bottom: 20px;
 }
 
-.avatar {
-    width: 40px;
-    border-radius: 50%;
+.subtitle {
+    color: #64748b;
 }
 
 /* CARDS */
 .cards {
-    margin-top: 30px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
@@ -74,67 +130,6 @@ body {
 .card {
     background: white;
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-}
-
-
-
-
-
-.profile-menu {
-    position: relative;
-    display: inline-block;
-}
-
-.profile-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* DROPDOWN */
-.dropdown {
-    display: none;
-    position: absolute;
-    
-    right: 0;
-    top: 50px;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    width: 160px;
-}
-
-.dropdown a,
-.dropdown button {
-    display: block;
-    padding: 12px;
-    border: none;
-    background: none;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    text-decoration: none;
-    color: #333;
-}
-
-.dropdown a:hover,
-.dropdown button:hover {
-    background: #f1f1f1;
-}
-
-.logout-btn {
-    background: none;
-    border: none;
-    color: white;
-    padding: 12px;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-}
-
-.logout-btn:hover {
-    background: #2f5378;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
