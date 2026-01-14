@@ -54,7 +54,7 @@
         </div>
 
         <!-- JOB POSTING FORM -->
-        <form class="job-form" id="postJobForm">
+        <form class="job-form" id="postJobForm" method="POST" action="{% url 'save_job' %}">
             {% csrf_token %}
             
             <div class="form-grid">
@@ -334,10 +334,8 @@
             }
         });
         
-        // Form submission - API call
-        document.getElementById('postJobForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        // Form submission - show loading state but allow normal submission
+        document.getElementById('postJobForm').addEventListener('submit', function(e) {
             const submitButton = this.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             
@@ -350,68 +348,8 @@
                 Posting...
             `;
             
-            try {
-                // Get form data
-                const formData = new FormData(this);
-                const data = {};
-                
-                // Convert FormData to object
-                for (let [key, value] of formData.entries()) {
-                    if (value.trim() !== '') {
-                        data[key] = value.trim();
-                    }
-                }
-                
-                // Get CSRF token
-                function getCookie(name) {
-                    let cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        const cookies = document.cookie.split(';');
-                        for (let i = 0; i < cookies.length; i++) {
-                            const cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
-                
-                const csrftoken = getCookie('csrftoken');
-                
-                // Make API call
-                const response = await fetch('{% url "save_job" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    // Show success message
-                    alert('Job posted successfully!');
-                    // Reset form
-                    this.reset();
-                    document.getElementById('charCount').textContent = '0';
-                    // Optionally redirect to dashboard or job list
-                    // window.location.href = '{% url "recruiter_dashboard" %}';
-                } else {
-                    // Show error message
-                    alert(result.error || 'Failed to post job. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while posting the job. Please try again.');
-            } finally {
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonText;
-            }
+            // Let the form submit normally - Django will handle it and redirect
+            // The form will submit to the save_job view which will redirect on success
         });
         
         // Add spinner animation

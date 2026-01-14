@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Jobs - Smart Hire Hub</title>
+    <link rel="stylesheet" href="{% static 'css/recuriter.css' %}">
+    <link rel="stylesheet" href="{% static 'css/my_jobs.css' %}">
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>Recruiter</h2>
+        <ul class="menu">
+            <li>
+                <a href="{% url 'recruiter_dashboard' %}">Dashboard</a>
+            </li>
+            <li>
+                <a href="{% url 'post_job' %}">Post Job</a>
+            </li>
+            <li>
+                <a href="{% url 'my_jobs' %}" class="active">My Jobs</a>
+            </li>
+            <li>
+                <a href="#">Applications</a>
+            </li>
+            <li>
+                <a href="{% url 'recruiter_account_settings' %}">Settings</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        {% include "layouts/header.html" %}
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>My Jobs</h1>
+                <p>Manage all your posted job listings</p>
+            </div>
+            <a href="{% url 'post_job' %}" class="btn-new-job">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Post New Job
+            </a>
+        </div>
+
+        <!-- JOBS LIST -->
+        {% if jobs %}
+            <div class="jobs-grid">
+                {% for job in jobs %}
+                    <div class="job-card {% if job.is_expired %}expired{% endif %} {% if not job.is_active %}inactive{% endif %}">
+                        <div class="job-card-header">
+                            <div class="job-title-section">
+                                <h3 class="job-title">{{ job.job_title }}</h3>
+                                <div class="job-meta">
+                                    <span class="job-location">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        {{ job.location }}
+                                    </span>
+                                    <span class="job-type">{{ job.get_job_type_display }}</span>
+                                </div>
+                            </div>
+                            <div class="job-status">
+                                {% if job.is_expired %}
+                                    <span class="status-badge expired-badge">Expired</span>
+                                {% elif not job.is_active %}
+                                    <span class="status-badge inactive-badge">Inactive</span>
+                                {% else %}
+                                    <span class="status-badge active-badge">Active</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="job-card-body">
+                            <p class="job-description">{{ job.description|truncatewords:30 }}</p>
+                            
+                            {% if job.salary_min or job.salary_max %}
+                                <div class="job-salary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                    <span>
+                                        {% if job.salary_min and job.salary_max %}
+                                            ₹{{ job.salary_min|floatformat:0 }} - ₹{{ job.salary_max|floatformat:0 }}
+                                        {% elif job.salary_min %}
+                                            ₹{{ job.salary_min|floatformat:0 }}+
+                                        {% elif job.salary_max %}
+                                            Up to ₹{{ job.salary_max|floatformat:0 }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            {% endif %}
+                            
+                            {% if job.experience_level %}
+                                <div class="job-experience">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                    <span>{{ job.get_experience_level_display }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="job-card-footer">
+                            <div class="job-dates">
+                                <span class="date-item">
+                                    <strong>Posted:</strong> {{ job.created_at|date:"M d, Y" }}
+                                </span>
+                                <span class="date-item">
+                                    <strong>Expires:</strong> {{ job.expiry_date|date:"M d, Y" }}
+                                </span>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-action view-btn" onclick="window.location.href='#'">
+                                    View
+                                </button>
+                                <button class="btn-action edit-btn" onclick="window.location.href='#'">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <h2>No Jobs Posted Yet</h2>
+                <p>Start posting jobs to attract talented candidates</p>
+                <a href="{% url 'post_job' %}" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Post Your First Job
+                </a>
+            </div>
+        {% endif %}
+    </main>
+
+</div>
+
+</body>
+</html>
