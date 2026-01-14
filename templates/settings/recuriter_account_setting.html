@@ -3,22 +3,43 @@
 <html>
 <head>
     <title>Account Settings</title>
-    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/recuriter_setting.css' %}">
 </head>
 <body>
-
-{% include "layouts/header.html" %}
+<!-- 
+{% include "layouts/header.html" %} -->
 
 <div class="settings-container">
     <div class="settings-card">
         <h2>Account Settings</h2>
 
-        <form method="POST">
-            {% csrf_token %}
-            <label>Change Password</label>
-            <input type="password" name="new_password" placeholder="New Password">
-            <button type="submit">Update Password</button>
-        </form>
+        <!-- COMPANY INFORMATION -->
+        <div class="info-section">
+            <h3>Company Information</h3>
+            <div class="info-display">
+                <p><strong>Company Name:</strong> <span>{{ request.user.recruiterprofile.company_name|default:"Not set" }}</span></p>
+                <p><strong>Email:</strong> <span>{{ request.user.recruiterprofile.company_email|default:"Not set" }}</span></p>
+                <p><strong>Phone:</strong> <span>{{ request.user.recruiterprofile.company_phone|default:"Not set" }}</span></p>
+                <p><strong>Address:</strong> <span>{{ request.user.recruiterprofile.company_address|default:"Not set" }}</span></p>
+            </div>
+        </div>
+
+        <!-- CHANGE PASSWORD -->
+        <div class="password-section">
+            <h3>Change Password</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="password" name="current_password" placeholder="Current Password" required>
+                <input type="password" name="new_password" placeholder="New Password" required>
+                <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
+                <button type="submit" name="change_password">Update Password</button>
+            </form>
+        </div>
+
+        <!-- BACK BUTTON -->
+        <a href="{% url 'recruiter_dashboard' %}" class="back-btn">
+            ← Back to Dashboard
+        </a>
     </div>
 </div>
 

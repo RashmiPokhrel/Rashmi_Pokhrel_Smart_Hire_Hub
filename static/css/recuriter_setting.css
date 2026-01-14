@@ -1,0 +1,216 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e293b, #3b82f6);
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.settings-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: calc(100vh - 80px);
+}
+
+/* =========================
+   CARD
+========================= */
+.settings-card {
+    width: 450px;
+    max-width: 100%;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.settings-card h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1.8rem;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.settings-card h3 {
+    margin-bottom: 15px;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+/* =========================
+   COMPANY INFORMATION
+========================= */
+.info-section {
+    margin-bottom: 30px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.info-display {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-display p {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.6;
+}
+
+.info-display p:last-child {
+    margin-bottom: 0;
+}
+
+.info-display strong {
+    color: #1e293b;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.info-display span {
+    color: #64748b;
+}
+
+/* =========================
+   PASSWORD SECTION
+========================= */
+.password-section {
+    margin-bottom: 25px;
+}
+
+/* =========================
+   FORM
+========================= */
+.settings-card label {
+    display: block;
+    font-size: 15px;
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.settings-card input {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+}
+
+.settings-card input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.settings-card input::placeholder {
+    color: #94a3b8;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.settings-card button {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    margin-top: 8px;
+}
+
+.settings-card button:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.settings-card button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+.back-btn {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #3b82f6;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+    .settings-card {
+        width: 100%;
+        padding: 30px 25px;
+    }
+
+    .settings-card h2 {
+        font-size: 1.5rem;
+    }
+}

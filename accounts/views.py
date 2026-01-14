@@ -299,7 +299,7 @@ def edit_profile(request):
 
         profile.save()
 
-        #  REDIRECT after save (IMPORTANT)
+        # REDIRECT after save (IMPORTANT)
         return redirect("jobseeker_dashboard")
 
     return render(request, "hire/edit_job_seeker.html", {
