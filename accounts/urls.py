@@ -28,7 +28,6 @@ urlpatterns = [
     path("jobseeker-dashboard/", jobseeker_dashboard, name="jobseeker_dashboard"),
     path("recruiter-dashboard/", recruiter_dashboard, name="recruiter_dashboard"),
 
-
     path('settings/', account_settings, name='account_settings'),
     path('recruiter/settings/', recruiter_account_settings, name='recruiter_account_settings'),
 
