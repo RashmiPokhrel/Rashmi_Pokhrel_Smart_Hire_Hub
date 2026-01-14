@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts', 
+    'jobs.apps.JobsConfig',
+    'dashboard.apps.DashboardConfig',
+    'recruiter.apps.RecruiterConfig'
 ]
 
 MIDDLEWARE = [
