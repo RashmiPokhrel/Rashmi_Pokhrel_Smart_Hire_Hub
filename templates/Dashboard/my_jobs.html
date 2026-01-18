@@ -25,7 +25,7 @@
                 <a href="{% url 'my_jobs' %}" class="active">My Jobs</a>
             </li>
             <li>
-                <a href="#">Applications</a>
+                <a href="{% url 'applications' %}">Applications</a>
             </li>
             <li>
                 <a href="{% url 'recruiter_account_settings' %}">Settings</a>
@@ -36,6 +36,17 @@
     <!-- MAIN -->
     <main class="main">
         {% include "layouts/header.html" %}
+        
+        <!-- MESSAGES -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         
         <!-- PAGE HEADER -->
         <div class="page-header">
@@ -52,87 +63,104 @@
             </a>
         </div>
 
-        <!-- JOBS LIST -->
+        <!-- JOBS TABLE -->
         {% if jobs %}
-            <div class="jobs-grid">
-                {% for job in jobs %}
-                    <div class="job-card {% if job.is_expired %}expired{% endif %} {% if not job.is_active %}inactive{% endif %}">
-                        <div class="job-card-header">
-                            <div class="job-title-section">
-                                <h3 class="job-title">{{ job.job_title }}</h3>
-                                <div class="job-meta">
-                                    <span class="job-location">
+            <div class="jobs-table-container">
+                <table class="jobs-table">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                            <th>Posted Date</th>
+                            <th>Expiry Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                            <tr class="{% if job.is_expired %}expired-row{% endif %} {% if not job.is_active %}inactive-row{% endif %}">
+                                <td>
+                                    <div class="job-title-cell">
+                                        <strong>{{ job.job_title }}</strong>
+                                        {% if job.experience_level %}
+                                            <span class="experience-tag">{{ job.get_experience_level_display }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="location-cell">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                             <circle cx="12" cy="10" r="3"></circle>
                                         </svg>
                                         {{ job.location }}
-                                    </span>
-                                    <span class="job-type">{{ job.get_job_type_display }}</span>
-                                </div>
-                            </div>
-                            <div class="job-status">
-                                {% if job.is_expired %}
-                                    <span class="status-badge expired-badge">Expired</span>
-                                {% elif not job.is_active %}
-                                    <span class="status-badge inactive-badge">Inactive</span>
-                                {% else %}
-                                    <span class="status-badge active-badge">Active</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="job-card-body">
-                            <p class="job-description">{{ job.description|truncatewords:30 }}</p>
-                            
-                            {% if job.salary_min or job.salary_max %}
-                                <div class="job-salary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                    <span>
-                                        {% if job.salary_min and job.salary_max %}
-                                            ₹{{ job.salary_min|floatformat:0 }} - ₹{{ job.salary_max|floatformat:0 }}
-                                        {% elif job.salary_min %}
-                                            ₹{{ job.salary_min|floatformat:0 }}+
-                                        {% elif job.salary_max %}
-                                            Up to ₹{{ job.salary_max|floatformat:0 }}
-                                        {% endif %}
-                                    </span>
-                                </div>
-                            {% endif %}
-                            
-                            {% if job.experience_level %}
-                                <div class="job-experience">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                    </svg>
-                                    <span>{{ job.get_experience_level_display }}</span>
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="job-card-footer">
-                            <div class="job-dates">
-                                <span class="date-item">
-                                    <strong>Posted:</strong> {{ job.created_at|date:"M d, Y" }}
-                                </span>
-                                <span class="date-item">
-                                    <strong>Expires:</strong> {{ job.expiry_date|date:"M d, Y" }}
-                                </span>
-                            </div>
-                            <div class="job-actions">
-                                <button class="btn-action view-btn" onclick="window.location.href='#'">
-                                    View
-                                </button>
-                                <button class="btn-action edit-btn" onclick="window.location.href='#'">
-                                    Edit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="job-type-badge">{{ job.get_job_type_display }}</span>
+                                </td>
+                                <td>
+                                    {% if job.salary_min or job.salary_max %}
+                                        <div class="salary-cell">
+                                            {% if job.salary_min and job.salary_max %}
+                                                ₹{{ job.salary_min|floatformat:0 }} - ₹{{ job.salary_max|floatformat:0 }}
+                                            {% elif job.salary_min %}
+                                                ₹{{ job.salary_min|floatformat:0 }}+
+                                            {% elif job.salary_max %}
+                                                Up to ₹{{ job.salary_max|floatformat:0 }}
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="no-salary">Not specified</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if job.is_expired %}
+                                        <span class="status-badge expired-badge">Expired</span>
+                                    {% elif not job.is_active %}
+                                        <span class="status-badge inactive-badge">Inactive</span>
+                                    {% else %}
+                                        <span class="status-badge active-badge">Active</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ job.created_at|date:"M d, Y" }}</td>
+                                <td>{{ job.expiry_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-action btn-edit" onclick="window.location.href='{% url 'edit_job' job.id %}'" title="Edit Job">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                        <button class="btn-action btn-applications" onclick="window.location.href='{% url 'view_applications' job.id %}'" title="View Applications">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            </svg>
+                                            Applications
+                                        </button>
+                                        <button class="btn-action btn-delete" onclick="deleteJob({{ job.id }}, '{{ job.job_title }}')" title="Delete Job">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         {% else %}
             <div class="empty-state">
@@ -159,6 +187,44 @@
     </main>
 
 </div>
+
+<script>
+    function deleteJob(jobId, jobTitle) {
+        if (confirm(`Are you sure you want to delete "${jobTitle}"? This action cannot be undone.`)) {
+            // Get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            const csrftoken = getCookie('csrftoken');
+            
+            // Create a form to submit DELETE request
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/delete-job/${jobId}/`;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrftoken;
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
 
 </body>
 </html>

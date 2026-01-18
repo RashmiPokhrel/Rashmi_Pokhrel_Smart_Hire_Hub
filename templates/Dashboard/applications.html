@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Applications - Smart Hire Hub</title>
+    <link rel="stylesheet" href="{% static 'css/recuriter.css' %}">
+    <link rel="stylesheet" href="{% static 'css/applications.css' %}">
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>Recruiter</h2>
+        <ul class="menu">
+            <li>
+                <a href="{% url 'recruiter_dashboard' %}">Dashboard</a>
+            </li>
+            <li>
+                <a href="{% url 'post_job' %}">Post Job</a>
+            </li>
+            <li>
+                <a href="{% url 'my_jobs' %}">My Jobs</a>
+            </li>
+            <li>
+                <a href="{% url 'applications' %}" class="active">Applications</a>
+            </li>
+            <li>
+                <a href="{% url 'recruiter_account_settings' %}">Settings</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        {% include "layouts/header.html" %}
+        
+        <!-- MESSAGES -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>Job Applications</h1>
+                <p>Review and manage all applications for your posted jobs</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value">{{ total_applications }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pending</span>
+                    <span class="stat-value pending">{{ pending_count }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Shortlisted</span>
+                    <span class="stat-value shortlisted">{{ shortlisted_count }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-container">
+            <form method="GET" class="filters-form">
+                <div class="filter-group">
+                    <label for="job">Filter by Job:</label>
+                    <select id="job" name="job" class="filter-select">
+                        <option value="">All Jobs</option>
+                        {% for job in jobs %}
+                            <option value="{{ job.id }}" {% if selected_job == job.id|stringformat:"s" %}selected{% endif %}>
+                                {{ job.job_title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status">Filter by Status:</label>
+                    <select id="status" name="status" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="reviewed" {% if selected_status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                        <option value="shortlisted" {% if selected_status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                        <option value="rejected" {% if selected_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        <option value="accepted" {% if selected_status == 'accepted' %}selected{% endif %}>Accepted</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-filter">Apply Filters</button>
+                {% if selected_job or selected_status %}
+                    <a href="{% url 'applications' %}" class="btn-clear">Clear Filters</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- APPLICATIONS TABLE -->
+        {% if applications %}
+            <div class="applications-table-container">
+                <table class="applications-table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Job Title</th>
+                            <th>Applied Date</th>
+                            <th>Resume</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                            <tr>
+                                <td>
+                                    <div class="candidate-cell">
+                                        {% if application.candidate.profile_image %}
+                                            <img src="{{ application.candidate.profile_image.url }}" alt="{{ application.candidate.full_name }}" class="candidate-avatar">
+                                        {% else %}
+                                            <div class="candidate-avatar-placeholder">
+                                                {{ application.candidate.full_name|first|upper|default:application.candidate.user.username|first|upper }}
+                                            </div>
+                                        {% endif %}
+                                        <div class="candidate-info">
+                                            <strong>{{ application.candidate.full_name|default:application.candidate.user.username }}</strong>
+                                            <span class="candidate-email">{{ application.candidate.user.email }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="job-title-cell">
+                                        <strong>{{ application.job.job_title }}</strong>
+                                        <span class="job-location">{{ application.job.location }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="date-cell">{{ application.applied_date|date:"M d, Y" }}</span>
+                                    <span class="time-cell">{{ application.applied_date|date:"h:i A" }}</span>
+                                </td>
+                                <td>
+                                    {% if application.resume %}
+                                        <a href="{{ application.resume.url }}" target="_blank" class="btn-resume">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            </svg>
+                                            View Resume
+                                        </a>
+                                    {% else %}
+                                        <span class="no-resume">No resume uploaded</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ application.get_status_display_class }}">
+                                        {{ application.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        {% if application.status != 'shortlisted' %}
+                                            <button class="btn-action btn-shortlist" onclick="updateStatus({{ application.id }}, 'shortlisted')" title="Shortlist Candidate">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                Shortlist
+                                            </button>
+                                        {% endif %}
+                                        {% if application.status != 'rejected' %}
+                                            <button class="btn-action btn-reject" onclick="updateStatus({{ application.id }}, 'rejected')" title="Reject Application">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                </svg>
+                                                Reject
+                                            </button>
+                                        {% endif %}
+                                        <button class="btn-action btn-view" onclick="viewApplication({{ application.id }})" title="View Details">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                            View
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </div>
+                <h2>No Applications Yet</h2>
+                <p>Applications from candidates will appear here once they apply to your jobs.</p>
+            </div>
+        {% endif %}
+    </main>
+
+</div>
+
+<script>
+    // Get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function updateStatus(applicationId, newStatus) {
+        const statusLabels = {
+            'shortlisted': 'Shortlist',
+            'rejected': 'Reject'
+        };
+        
+        const confirmMessage = statusLabels[newStatus] === 'Shortlist' 
+            ? `Are you sure you want to shortlist this candidate?`
+            : `Are you sure you want to reject this application?`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        const row = event.target.closest('tr');
+        const statusCell = row.querySelector('td:nth-child(5)');
+        const actionCell = row.querySelector('td:nth-child(6)');
+        
+        // Disable buttons during update
+        const buttons = actionCell.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+        
+        fetch(`/api/update-application-status/${applicationId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                'status': newStatus
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update status badge
+                statusCell.innerHTML = `<span class="status-badge ${data.new_status_class}">${data.new_status_display}</span>`;
+                
+                // Reload page to update action buttons and statistics
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the status. Please try again.');
+            buttons.forEach(btn => btn.disabled = false);
+        });
+    }
+
+    function viewApplication(applicationId) {
+        // TODO: Implement application detail view
+        alert('Application detail view coming soon! Application ID: ' + applicationId);
+    }
+</script>
+
+</body>
+</html>

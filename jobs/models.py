@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from accounts.models import RecruiterProfile
+from accounts.models import RecruiterProfile, JobSeekerProfile
 
 
 class Job(models.Model):
@@ -55,3 +55,89 @@ class Job(models.Model):
     
     def is_expired(self):
         return timezone.now().date() > self.expiry_date
+    
+    def mark_inactive_if_expired(self):
+        """
+        Mark this job as inactive if it has passed its expiry date.
+        Returns True if the job was updated, False otherwise.
+        """
+        if self.is_expired() and self.is_active:
+            self.is_active = False
+            self.save(update_fields=['is_active'])
+            return True
+        return False
+    
+    @classmethod
+    def mark_all_expired_inactive(cls):
+        """
+        Mark all expired jobs as inactive.
+        Returns the number of jobs updated.
+        """
+        today = timezone.now().date()
+        updated_count = cls.objects.filter(
+            expiry_date__lt=today,
+            is_active=True
+        ).update(is_active=False)
+        return updated_count
+    
+    @classmethod
+    def get_active_jobs(cls, recruiter=None):
+        """
+        Get all active jobs (not expired and is_active=True).
+        Optionally filter by recruiter.
+        """
+        today = timezone.now().date()
+        queryset = cls.objects.filter(
+            is_active=True,
+            expiry_date__gte=today
+        )
+        if recruiter:
+            queryset = queryset.filter(recruiter=recruiter)
+        return queryset
+
+
+class Application(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('shortlisted', 'Shortlisted'),
+        ('rejected', 'Rejected'),
+        ('accepted', 'Accepted'),
+    ]
+    
+    # Relationships
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
+    candidate = models.ForeignKey(JobSeekerProfile, on_delete=models.CASCADE, related_name='applications')
+    
+    # Application Details
+    resume = models.FileField(upload_to='resumes/%Y/%m/%d/', blank=True, null=True)
+    cover_letter = models.TextField(blank=True, null=True)
+    
+    # Status and Dates
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    applied_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Additional Notes (for recruiter)
+    notes = models.TextField(blank=True, null=True, help_text="Internal notes about this application")
+    
+    class Meta:
+        app_label = 'jobs'
+        ordering = ['-applied_date']
+        verbose_name = 'Application'
+        verbose_name_plural = 'Applications'
+        unique_together = ['job', 'candidate']  # Prevent duplicate applications
+    
+    def __str__(self):
+        return f"{self.candidate.full_name or self.candidate.user.username} - {self.job.job_title}"
+    
+    def get_status_display_class(self):
+        """Return CSS class for status badge"""
+        status_classes = {
+            'pending': 'status-pending',
+            'reviewed': 'status-reviewed',
+            'shortlisted': 'status-shortlisted',
+            'rejected': 'status-rejected',
+            'accepted': 'status-accepted',
+        }
+        return status_classes.get(self.status, 'status-pending')

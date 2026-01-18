@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Job
+from .models import Job, Application
 
 
 @admin.register(Job)
@@ -22,5 +22,26 @@ class JobAdmin(admin.ModelAdmin):
         }),
         ('Dates & Status', {
             'fields': ('expiry_date', 'is_active', 'created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(Application)
+class ApplicationAdmin(admin.ModelAdmin):
+    list_display = ('candidate', 'job', 'status', 'applied_date', 'updated_at')
+    list_filter = ('status', 'applied_date', 'job__recruiter')
+    search_fields = ('candidate__full_name', 'candidate__user__email', 'job__job_title', 'job__recruiter__company_name')
+    readonly_fields = ('applied_date', 'updated_at')
+    date_hierarchy = 'applied_date'
+    
+    fieldsets = (
+        ('Application Details', {
+            'fields': ('job', 'candidate', 'resume', 'cover_letter', 'status')
+        }),
+        ('Recruiter Notes', {
+            'fields': ('notes',)
+        }),
+        ('Timestamps', {
+            'fields': ('applied_date', 'updated_at')
         }),
     )

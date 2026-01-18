@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browse Jobs - Smart Hire Hub</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/browse_jobs.css' %}">
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2>Job Seeker</h2>
+
+        <ul class="menu">
+            <li>
+                <a href="{% url 'jobseeker_dashboard' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'browse_jobs' %}" class="active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <span>Browse Jobs</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'edit_profile' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="generateResume(); return false;" class="generate-resume-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Generate Resume</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Saved Jobs</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Applied Jobs</span>
+                </a>
+            </li>
+        </ul>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        {% include "layouts/header.html" %}
+        
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>Browse Jobs</h1>
+                <p>Discover opportunities from top companies</p>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters-section">
+            <form method="GET" class="filters-form">
+                <div class="filter-group">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Search jobs, companies..." 
+                        class="search-input"
+                        value="{{ search_query }}"
+                    >
+                </div>
+                <div class="filter-group">
+                    <input 
+                        type="text" 
+                        name="location" 
+                        placeholder="Location" 
+                        class="filter-input"
+                        value="{{ location_filter }}"
+                    >
+                </div>
+                <div class="filter-group">
+                    <select name="job_type" class="filter-select">
+                        <option value="">All Job Types</option>
+                        <option value="full-time" {% if job_type_filter == 'full-time' %}selected{% endif %}>Full Time</option>
+                        <option value="part-time" {% if job_type_filter == 'part-time' %}selected{% endif %}>Part Time</option>
+                        <option value="contract" {% if job_type_filter == 'contract' %}selected{% endif %}>Contract</option>
+                        <option value="internship" {% if job_type_filter == 'internship' %}selected{% endif %}>Internship</option>
+                        <option value="remote" {% if job_type_filter == 'remote' %}selected{% endif %}>Remote</option>
+                        <option value="hybrid" {% if job_type_filter == 'hybrid' %}selected{% endif %}>Hybrid</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select name="experience" class="filter-select">
+                        <option value="">All Experience Levels</option>
+                        <option value="entry" {% if experience_filter == 'entry' %}selected{% endif %}>Entry Level</option>
+                        <option value="mid" {% if experience_filter == 'mid' %}selected{% endif %}>Mid Level</option>
+                        <option value="senior" {% if experience_filter == 'senior' %}selected{% endif %}>Senior Level</option>
+                        <option value="executive" {% if experience_filter == 'executive' %}selected{% endif %}>Executive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-filter">Apply Filters</button>
+                {% if search_query or location_filter or job_type_filter or experience_filter %}
+                    <a href="{% url 'browse_jobs' %}" class="btn-clear">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- JOBS GRID -->
+        {% if jobs %}
+            <div class="jobs-count">
+                <p>{{ jobs|length }} job{{ jobs|length|pluralize }} found</p>
+            </div>
+            <div class="jobs-grid">
+                {% for job in jobs %}
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div class="job-title-section">
+                                <h3 class="job-title">{{ job.job_title }}</h3>
+                                <p class="company-name">{{ job.recruiter.company_name|default:job.recruiter.user.username }}</p>
+                            </div>
+                            {% if job.recruiter.profile_image %}
+                                <img src="{{ job.recruiter.profile_image.url }}" alt="{{ job.recruiter.company_name }}" class="company-logo">
+                            {% else %}
+                                <div class="company-logo-placeholder">
+                                    {{ job.recruiter.company_name|first|upper|default:"C" }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="job-details">
+                            <div class="job-detail-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                <span>{{ job.location }}</span>
+                            </div>
+                            <div class="job-detail-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <span>{{ job.get_job_type_display }}</span>
+                            </div>
+                            {% if job.experience_level %}
+                                <div class="job-detail-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                    <span>{{ job.get_experience_level_display }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if job.salary_min or job.salary_max %}
+                            <div class="job-salary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                                <span>
+                                    {% if job.salary_min and job.salary_max %}
+                                        ₹{{ job.salary_min|floatformat:0 }} - ₹{{ job.salary_max|floatformat:0 }}
+                                    {% elif job.salary_min %}
+                                        ₹{{ job.salary_min|floatformat:0 }}+
+                                    {% elif job.salary_max %}
+                                        Up to ₹{{ job.salary_max|floatformat:0 }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <div class="job-description">
+                            <p>{{ job.description|truncatewords:30 }}</p>
+                        </div>
+
+                        <div class="job-footer">
+                            <div class="job-meta">
+                                <span class="posted-date">Posted {{ job.created_at|timesince }} ago</span>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-apply" onclick="applyToJob({{ job.id }})">Apply Now</button>
+                                <button class="btn-save" onclick="saveJob({{ job.id }})" title="Save Job">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-jobs">
+                <div class="no-jobs-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </div>
+                <h3>No Jobs Found</h3>
+                <p>Try adjusting your filters or check back later for new opportunities.</p>
+            </div>
+        {% endif %}
+    </main>
+
+</div>
+
+<script>
+    function applyToJob(jobId) {
+        // TODO: Implement apply to job functionality
+        alert('Apply to job functionality coming soon! Job ID: ' + jobId);
+    }
+
+    function saveJob(jobId) {
+        // TODO: Implement save job functionality
+        alert('Save job functionality coming soon! Job ID: ' + jobId);
+    }
+
+    function generateResume() {
+        // TODO: Implement generate resume functionality
+        alert('Generate Resume functionality coming soon!');
+    }
+</script>
+
+</body>
+</html>

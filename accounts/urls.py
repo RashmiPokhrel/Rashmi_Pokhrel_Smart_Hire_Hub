@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register_user,login_user,logout_view,home,password_reset_view,send_reset_otp,verify_reset_otp,edit_profile,jobseeker_dashboard,recruiter_dashboard,account_settings,recruiter_account_settings,edit_recruiter_profile
+from .views import register_user,login_user,logout_view,home,password_reset_view,send_reset_otp,verify_reset_otp,edit_profile,jobseeker_dashboard,recruiter_dashboard,account_settings,recruiter_account_settings,edit_recruiter_profile,browse_jobs
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [
-    path("home/", home, name="home"),
+    path("", home, name="home"),
+    path("home/", home, name="home_alt"),
     path('register/', register_user, name='register'),
     path('login/', login_user, name='login'),
 
@@ -26,6 +27,7 @@ urlpatterns = [
 
 
     path("jobseeker-dashboard/", jobseeker_dashboard, name="jobseeker_dashboard"),
+    path("browse-jobs/", browse_jobs, name="browse_jobs"),
     path("recruiter-dashboard/", recruiter_dashboard, name="recruiter_dashboard"),
 
     path('settings/', account_settings, name='account_settings'),

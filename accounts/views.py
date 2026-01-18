@@ -6,6 +6,7 @@ import json
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.db import IntegrityError
+from django.db.models import Q
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -19,7 +20,42 @@ from .models import User, PasswordResetOTP
 
 
 def home(request):
-    return render(request, 'hire/home.html')
+    from jobs.models import Job
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Mark expired jobs as inactive
+    Job.mark_all_expired_inactive()
+    
+    # Get latest 3 active jobs
+    latest_jobs = Job.get_active_jobs().select_related('recruiter', 'recruiter__user').order_by('-created_at')[:3]
+    
+    # Calculate time ago for each job
+    jobs_with_time = []
+    for job in latest_jobs:
+        time_diff = timezone.now() - job.created_at
+        if time_diff < timedelta(minutes=1):
+            time_ago = "Just now"
+        elif time_diff < timedelta(hours=1):
+            minutes = int(time_diff.total_seconds() / 60)
+            time_ago = f"{minutes} min ago"
+        elif time_diff < timedelta(days=1):
+            hours = int(time_diff.total_seconds() / 3600)
+            time_ago = f"{hours} hour{'s' if hours > 1 else ''} ago"
+        elif time_diff < timedelta(days=7):
+            days = int(time_diff.total_seconds() / 86400)
+            time_ago = f"{days} day{'s' if days > 1 else ''} ago"
+        else:
+            time_ago = job.created_at.strftime("%b %d, %Y")
+        
+        jobs_with_time.append({
+            'job': job,
+            'time_ago': time_ago
+        })
+    
+    return render(request, 'hire/home.html', {
+        'latest_jobs': jobs_with_time
+    })
 
 @csrf_exempt
 
@@ -320,14 +356,107 @@ def logout_view(request):
 
 @login_required
 def jobseeker_dashboard(request):
-    return render(request, "Dashboard/Jobseeker.html")
+    from jobs.models import Job, Application
+    
+    # Get job seeker profile if exists
+    try:
+        profile = JobSeekerProfile.objects.get(user=request.user)
+    except JobSeekerProfile.DoesNotExist:
+        profile = None
+    
+    # Calculate statistics
+    # Count applications by this job seeker
+    try:
+        applications_count = Application.objects.filter(candidate=profile).count() if profile else 0
+    except:
+        applications_count = 0
+    
+    # Calculate profile completion (placeholder for now)
+    profile_completion = 30  # TODO: Calculate based on filled fields
+    
+    return render(request, "Dashboard/Jobseeker.html", {
+        "profile": profile,
+        "applications_count": applications_count,
+        "profile_completion": profile_completion
+    })
+
+
+@login_required
+def browse_jobs(request):
+    """
+    Browse all available jobs - separate page for job listings
+    """
+    from jobs.models import Job
+    
+    if request.user.role != 'job_seeker':
+        messages.error(request, 'Only job seekers can browse jobs.')
+        return redirect('jobseeker_dashboard')
+    
+    # Get all active jobs (not expired and is_active=True)
+    # Automatically mark expired jobs as inactive
+    Job.mark_all_expired_inactive()
+    
+    # Fetch all active jobs with filters
+    jobs = Job.get_active_jobs().select_related('recruiter', 'recruiter__user').order_by('-created_at')
+    
+    # Get filter parameters
+    location_filter = request.GET.get('location', '')
+    job_type_filter = request.GET.get('job_type', '')
+    experience_filter = request.GET.get('experience', '')
+    search_query = request.GET.get('search', '')
+    
+    # Apply filters
+    if location_filter:
+        jobs = jobs.filter(location__icontains=location_filter)
+    
+    if job_type_filter:
+        jobs = jobs.filter(job_type=job_type_filter)
+    
+    if experience_filter:
+        jobs = jobs.filter(experience_level=experience_filter)
+    
+    if search_query:
+        jobs = jobs.filter(
+            Q(job_title__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(recruiter__company_name__icontains=search_query)
+        )
+    
+    # Get job seeker profile
+    try:
+        profile = JobSeekerProfile.objects.get(user=request.user)
+    except JobSeekerProfile.DoesNotExist:
+        profile = None
+    
+    return render(request, "Dashboard/browse_jobs.html", {
+        "jobs": jobs,
+        "profile": profile,
+        "location_filter": location_filter,
+        "job_type_filter": job_type_filter,
+        "experience_filter": experience_filter,
+        "search_query": search_query
+    })
 
 @login_required
 def recruiter_dashboard(request):
-   
+    from jobs.models import Job
+    
     profile = RecruiterProfile.objects.get(user=request.user)
+    
+    # Automatically mark expired jobs as inactive
+    Job.mark_all_expired_inactive()
+    
+    # Calculate real job statistics
+    total_jobs = Job.objects.filter(recruiter=profile).count()
+    active_jobs = Job.get_active_jobs(recruiter=profile).count()
+    # TODO: Calculate total applications when application model is created
+    total_applications = 0  # Placeholder for now
+    
     return render(request, "Dashboard/recuriter.html", {
-        "profile": profile
+        "profile": profile,
+        "total_jobs": total_jobs,
+        "active_jobs": active_jobs,
+        "total_applications": total_applications
     })
 
 from django.contrib.auth import update_session_auth_hash

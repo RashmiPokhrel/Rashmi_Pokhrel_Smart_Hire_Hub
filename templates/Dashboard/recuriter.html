@@ -15,7 +15,7 @@
         <h2>Recruiter</h2>
         <ul class="menu">
             <li>
-                <a href="{% url 'recruiter_dashboard' %}">Dashboard</a>
+                <a href="{% url 'recruiter_dashboard' %}" class="active">Dashboard</a>
             </li>
             <li>
                 <a href="{% url 'post_job' %}">Post Job</a>
@@ -24,7 +24,7 @@
                 <a href="{% url 'my_jobs' %}">My Jobs</a>
             </li>
             <li>
-                <a href="#">Applications</a>
+                <a href="{% url 'applications' %}">Applications</a>
             </li>
             <li>
                 <a href="{% url 'recruiter_account_settings' %}">Settings</a>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="stat-content">
                     <h3 class="stat-title">Total Jobs</h3>
-                    <p class="stat-value">24</p>
+                    <p class="stat-value">{{ total_jobs|default:0 }}</p>
                     <div class="stat-tags">
                         <span class="stat-tag">All Time</span>
                         <span class="stat-tag">Posted</span>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="stat-content">
                     <h3 class="stat-title">Active Jobs</h3>
-                    <p class="stat-value">18</p>
+                    <p class="stat-value">{{ active_jobs|default:0 }}</p>
                     <div class="stat-tags">
                         <span class="stat-tag">Currently</span>
                         <span class="stat-tag">Live</span>
@@ -106,7 +106,7 @@
                 </div>
                 <div class="stat-content">
                     <h3 class="stat-title">Total Applications</h3>
-                    <p class="stat-value">142</p>
+                    <p class="stat-value">{{ total_applications|default:0 }}</p>
                     <div class="stat-tags">
                         <span class="stat-tag">Received</span>
                         <span class="stat-tag">Pending</span>

@@ -3,6 +3,48 @@
 ================================ */
 
 /* ===============================
+   MESSAGES
+================================ */
+.messages-container {
+    margin-bottom: 24px;
+}
+
+.message {
+    padding: 14px 20px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
+
+.message-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+}
+
+.message-info {
+    background: #dbeafe;
+    color: #1e40af;
+    border-left: 4px solid #3b82f6;
+}
+
+.message-warning {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+}
+
+/* ===============================
    PAGE HEADER
 ================================ */
 .page-header {

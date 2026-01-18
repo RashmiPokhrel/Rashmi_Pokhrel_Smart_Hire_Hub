@@ -5,6 +5,7 @@
 <head>
     <title>Job Seeker Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jobseeker_dashboard.css' %}">
     <script defer src="{% static 'js/dashboard.js' %}"></script>
 </head>
 <body>
@@ -13,54 +14,226 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-        <div class="logo">
-            <img src="{% static 'assets/images/Logo.png' %}">
-            <h2>Smart Hire Hub</h2>
-        </div>
+        <h2>Job Seeker</h2>
 
         <ul class="menu">
-            <li class="active">Dashboard</li>
-            <li onclick="location.href='/edit_profile/'">My Profile</li>
-            <li>Saved Jobs</li>
-            <li>Applied Jobs</li>
-           <form method="POST" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button type="submit" class="logout-btn">Logout</button>
-</form>
-
+            <li>
+                <a href="{% url 'jobseeker_dashboard' %}" class="active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'browse_jobs' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <span>Browse Jobs</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'edit_profile' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="generateResume(); return false;" class="generate-resume-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Generate Resume</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Saved Jobs</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>Applied Jobs</span>
+                </a>
+            </li>
         </ul>
+
     </aside>
 
     <!-- MAIN -->
     <main class="main">
         {% include "layouts/header.html" %}
-        <!-- HEADER -->
-        <header class="top-header">
-            <h3>Welcome, {{ request.user.username }}</h3>
-         
-        </header>
+        
+        <!-- WELCOME CARD -->
+        <div class="welcome-card">
+            <div class="welcome-content">
+                <div class="welcome-text">
+                    <h1>Welcome back, {{ profile.full_name|default:request.user.username }}!</h1>
+                    <p class="welcome-subtitle">Here's your job search overview</p>
+                </div>
+                {% if profile.profile_image %}
+                    <div class="welcome-image">
+                        <img src="{{ profile.profile_image.url }}" alt="Profile" class="profile-img-small">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-        <!-- CARDS -->
-        <section class="cards">
-            <div class="card">
-                <h4>Jobs Applied</h4>
-                <p>0</p>
+        <!-- STAT CARDS -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon jobs-applied-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Jobs Applied</h3>
+                    <p class="stat-value">{{ applications_count|default:0 }}</p>
+                    <div class="stat-tags">
+                        <span class="stat-tag">Total</span>
+                        <span class="stat-tag">Applications</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <h4>Saved Jobs</h4>
-                <p>0</p>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon saved-jobs-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Saved Jobs</h3>
+                    <p class="stat-value">0</p>
+                    <div class="stat-tags">
+                        <span class="stat-tag">Bookmarked</span>
+                        <span class="stat-tag">For Later</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <h4>Profile Completion</h4>
-                <p>30%</p>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper">
+                    <div class="stat-icon profile-completion-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Profile Completion</h3>
+                    <p class="stat-value">{{ profile_completion }}%</p>
+                    <div class="stat-tags">
+                        <span class="stat-tag">Complete</span>
+                        <span class="stat-tag">Your Profile</span>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
+
+        <!-- TESTIMONIALS SECTION -->
+        <div class="testimonials-section">
+            <h2 class="section-title">What Job Seekers Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+                            </svg>
+                        </div>
+                        <p class="testimonial-text">"Smart Hire Hub made my job search so much easier! I found my dream job within weeks of joining."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">S</div>
+                            <div class="author-info">
+                                <strong>Sarah Johnson</strong>
+                                <span>Software Engineer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+                            </svg>
+                        </div>
+                        <p class="testimonial-text">"The platform is user-friendly and the job matching is excellent. Highly recommend to all job seekers!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">M</div>
+                            <div class="author-info">
+                                <strong>Michael Chen</strong>
+                                <span>Marketing Manager</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path>
+                                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"></path>
+                            </svg>
+                        </div>
+                        <p class="testimonial-text">"I love how easy it is to apply for jobs and track my applications. The interface is clean and intuitive."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">E</div>
+                            <div class="author-info">
+                                <strong>Emily Rodriguez</strong>
+                                <span>Data Analyst</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </main>
 
 </div>
+
+<script>
+    function generateResume() {
+        // TODO: Implement generate resume functionality
+        alert('Generate Resume functionality coming soon!');
+    }
+</script>
 
 </body>
 </html>
